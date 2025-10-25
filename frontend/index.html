@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Question Generator</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>PDF Question Generator</h1>
+            <p>Tải PDF lên và tạo câu hỏi tự động</p>
+        </header>
+
+        <!-- Danh sách file đã tải lên -->
+        <div class="files-section" id="filesSection">
+            <div class="section-header-simple">
+                <h2>📁 File đã tải lên</h2>
+            </div>
+            <div class="files-list" id="filesList">
+                <p class="empty-message">Chưa có file nào được tải lên</p>
+            </div>
+        </div>
+
+        <div class="upload-section">
+            <div class="upload-form">
+                <div class="file-upload">
+                    <input type="file" id="pdfFile" accept=".pdf" required>
+                    <label for="pdfFile" class="file-label">
+                        Chọn file PDF mới (tùy chọn)
+                    </label>
+                    <span class="file-name" id="fileName"></span>
+                    <p class="file-note">💡 Nếu không chọn file mới, sẽ dùng file từ danh sách phía trên</p>
+                </div>
+
+                <div class="prompt-section">
+                    <label for="userPrompt">Nhập yêu cầu tạo câu hỏi:</label>
+                    <textarea 
+                        id="userPrompt" 
+                        placeholder="Ví dụ: Tạo 10 câu trắc nghiệm về kiến thức quan trọng trong văn bản này"
+                        rows="3"
+                        required
+                    ></textarea>
+                </div>
+
+                <div class="upload-actions">
+                    <button id="uploadBtn" class="upload-btn">
+                         Tạo câu hỏi
+                    </button>
+                </div>
+            </div>
+
+            <div class="loading" id="loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>Đang xử lý PDF và tạo câu hỏi...</p>
+            </div>
+        </div>
+
+        <div class="questions-section" id="questionsSection" style="display: none;">
+            <div class="section-header">
+                <h2> Câu hỏi đã tạo</h2>
+                <div class="section-actions">
+                    <button id="exportBtn" class="export-btn"> Xuất PDF</button>
+                    <span class="question-count" id="questionCount"></span>
+                </div>
+            </div>
+
+            <div class="questions-container" id="questionsContainer">
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

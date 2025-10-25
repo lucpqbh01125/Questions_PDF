@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - PDF Question Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #e0f4fd;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Decorative lines */
+        body::before,
+        body::after {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        }
+
+        body::before {
+            top: 20%;
+            left: -200px;
+            transform: rotate(-25deg);
+        }
+
+        body::after {
+            bottom: 20%;
+            right: -200px;
+            transform: rotate(-25deg);
+        }
+
+        .register-container {
+            background: white;
+            padding: 50px 60px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 450px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-text {
+            color: #555;
+            font-size: 14px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .welcome-icon {
+            color: #ffa500;
+            font-size: 16px;
+        }
+
+        h2 {
+            color: #2c3e50;
+            font-size: 28px;
+            margin-bottom: 40px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            color: #2c3e50;
+            font-size: 14px;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"] {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: #fafafa;
+            color: #2c3e50;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        input[type="email"]:focus {
+            outline: none;
+            border-color: #5a7a90;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(90, 122, 144, 0.1);
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 14px;
+            background: #5a7a90;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(90, 122, 144, 0.3);
+            margin-top: 20px;
+        }
+
+        .btn-register:hover {
+            background: #4a6a80;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(90, 122, 144, 0.4);
+        }
+
+        .btn-register:active {
+            transform: translateY(0);
+        }
+
+        .signin-link {
+            text-align: center;
+            margin-top: 30px;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .signin-link a {
+            color: #5a7a90;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .signin-link a:hover {
+            color: #3d5a6f;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .message.error {
+            background: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+
+        .message.success {
+            background: #efe;
+            color: #3c3;
+            border: 1px solid #cfc;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #5a7a90;
+            margin-top: 10px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #5a7a90;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .password-strength {
+            margin-top: 5px;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .strength-bar {
+            height: 4px;
+            border-radius: 2px;
+            background: #e0e0e0;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .strength-bar-fill {
+            height: 100%;
+            width: 0;
+            transition: all 0.3s ease;
+            background: #ccc;
+        }
+
+        .strength-weak { background: #ff4757; width: 33%; }
+        .strength-medium { background: #ffa502; width: 66%; }
+        .strength-strong { background: #26de81; width: 100%; }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .register-container {
+                padding: 40px 30px;
+                margin: 10px;
+                max-width: 100%;
+            }
+
+            h2 {
+                font-size: 24px;
+                margin-bottom: 30px;
+            }
+
+            .welcome-text {
+                font-size: 13px;
+            }
+
+            input[type="text"],
+            input[type="password"],
+            input[type="email"] {
+                padding: 12px 14px;
+                font-size: 14px;
+            }
+
+            .btn-register {
+                padding: 12px;
+                font-size: 15px;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            .password-strength {
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .register-container {
+                padding: 30px 20px;
+                margin: 10px;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            }
+
+            h2 {
+                font-size: 22px;
+                margin-bottom: 25px;
+            }
+
+            .welcome-text {
+                font-size: 12px;
+            }
+
+            input[type="text"],
+            input[type="password"],
+            input[type="email"] {
+                padding: 11px 12px;
+                font-size: 14px;
+            }
+
+            label {
+                font-size: 13px;
+            }
+
+            .btn-register {
+                padding: 12px;
+                font-size: 14px;
+            }
+
+            .signin-link {
+                font-size: 13px;
+            }
+
+            .message {
+                font-size: 13px;
+                padding: 10px;
+            }
+
+            .password-strength {
+                font-size: 11px;
+            }
+
+            body::before,
+            body::after {
+                width: 400px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .register-container {
+                padding: 25px 15px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            input[type="text"],
+            input[type="password"],
+            input[type="email"] {
+                padding: 10px;
+                font-size: 13px;
+            }
+
+            .btn-register {
+                padding: 11px;
+                font-size: 13px;
+            }
+
+            .password-strength {
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="welcome-text">
+            <span class="welcome-icon">✨</span>
+            <span>Join us today</span>
+        </div>
+        <h2>Create your account</h2>
+        
+        <div id="message" class="message"></div>
+
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="fullname">Full Name</label>
+                <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Choose a username" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Create a strong password" required>
+                <div class="password-strength">
+
+            </div>
+
+            <button type="submit" class="btn-register">CREATE ACCOUNT</button>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Đang tạo tài khoản...</p>
+            </div>
+        </form>
+
+        <div class="signin-link">
+            Already have an account? <a href="login.html">Sign in</a>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8000';
+        const registerForm = document.getElementById('registerForm');
+        const messageDiv = document.getElementById('message');
+        const loadingDiv = document.getElementById('loading');
+        const passwordInput = document.getElementById('password');
+        const strengthBar = document.getElementById('strengthBar');
+        const strengthText = document.getElementById('strengthText');
+
+        function showMessage(message, type = 'error') {
+            messageDiv.textContent = message;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = 'block';
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Password strength checker
+        passwordInput.addEventListener('input', (e) => {
+            const password = e.target.value;
+            let strength = 0;
+
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]+/)) strength++;
+            if (password.match(/[A-Z]+/)) strength++;
+            if (password.match(/[0-9]+/)) strength++;
+            if (password.match(/[$@#&!]+/)) strength++;
+
+            strengthBar.className = 'strength-bar-fill';
+            
+            if (strength <= 2) {
+                strengthBar.classList.add('strength-weak');
+                strengthText.textContent = 'Weak password';
+                strengthText.style.color = '#ff4757';
+            } else if (strength <= 4) {
+                strengthBar.classList.add('strength-medium');
+                strengthText.textContent = 'Medium password';
+                strengthText.style.color = '#ffa502';
+            } else {
+                strengthBar.classList.add('strength-strong');
+                strengthText.textContent = 'Strong password';
+                strengthText.style.color = '#26de81';
+            }
+        });
+
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const fullname = document.getElementById('fullname').value.trim();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            // Validation
+            if (!fullname || !username || !password) {
+                showMessage('Vui lòng nhập đầy đủ thông tin!', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showMessage('Mật khẩu phải có ít nhất 6 ký tự!', 'error');
+                return;
+            }
+
+            if (username.length < 3) {
+                showMessage('Username phải có ít nhất 3 ký tự!', 'error');
+                return;
+            }
+
+            loadingDiv.style.display = 'block';
+            messageDiv.style.display = 'none';
+
+            try {
+                const response = await fetch(`${API_URL}/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        full_name: fullname,
+                        username: username,
+                        password: password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showMessage('Đăng ký thành công! Đang chuyển đến trang đăng nhập...', 'success');
+                    
+                    // Chuyển hướng sau 2 giây
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                } else {
+                    showMessage(data.detail || 'Đăng ký thất bại!', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('Không thể kết nối đến server!', 'error');
+            } finally {
+                loadingDiv.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
